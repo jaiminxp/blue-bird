@@ -3,7 +3,7 @@ import {AuthButtonServer} from "@/app/auth-button-server";
 import {redirect} from "next/navigation";
 
 export default async function Home() {
-  const supabase = await createClient();
+  const supabase = await createClient<Database>();
 
   const {data: {session}} = await supabase.auth.getSession()
 

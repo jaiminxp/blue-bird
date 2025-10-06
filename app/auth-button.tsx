@@ -7,7 +7,7 @@ import { Session } from "@supabase/auth-js";
 export const AuthButton = ({session}: {session: Session | null}) => {
     const router = useRouter()
     const handleSignIn = async () => {
-        const supabase = await createClient()
+        const supabase = await createClient<Database>()
 
         await supabase.auth.signInWithOAuth({
             provider: 'github',
@@ -18,7 +18,7 @@ export const AuthButton = ({session}: {session: Session | null}) => {
     }
 
     const handleSignOut = async () => {
-        const supabase = await createClient()
+        const supabase = await createClient<Database>()
         await supabase.auth.signOut()
         router.refresh()
     }
