@@ -1,5 +1,5 @@
 import {createClient} from "@/supabase/server";
-import {AuthButton} from "@/app/auth-button";
+import {AuthButtonServer} from "@/app/auth-button-server";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -8,7 +8,7 @@ export default async function Home() {
 
   return (
     <div>
-      <AuthButton />
+      <AuthButtonServer />
       {JSON.stringify(tweets, null, 2)}
     </div>
   );
