@@ -15,10 +15,13 @@ export default async function Home() {
   const { data: tweets } = await supabase.from("tweets").select("*, profiles(*)")
 
   return (
-    <div>
-      <NewTweet />
-      <AuthButtonServer />
-      {JSON.stringify(tweets, null, 2)}
-    </div>
+      <div>
+          <NewTweet/>
+          <AuthButtonServer/>
+          {tweets?.map((tweet) => (<div key={tweet.id}>
+              <p>{tweet.profiles.name} {tweet.profiles.username}</p>
+              <p>{tweet.title}</p>
+          </div>))}
+      </div>
   );
 }
