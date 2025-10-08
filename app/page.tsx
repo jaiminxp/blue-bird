@@ -1,6 +1,7 @@
 import {createClient} from "@/supabase/server";
 import {AuthButtonServer} from "@/app/auth-button-server";
 import {redirect} from "next/navigation";
+import NewTweet from "@/app/new-tweet";
 
 export default async function Home() {
   const supabase = await createClient<Database>();
@@ -15,6 +16,7 @@ export default async function Home() {
 
   return (
     <div>
+      <NewTweet />
       <AuthButtonServer />
       {JSON.stringify(tweets, null, 2)}
     </div>
