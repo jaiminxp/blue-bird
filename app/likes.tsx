@@ -3,7 +3,7 @@
 import { createClient } from "@/supabase/client";
 import { useRouter } from "next/navigation";
 
-export default function Likes({ tweet }: { tweet: any }) {
+export default function Likes({ tweet }: { tweet: TweetWithAuthor }) {
   const router = useRouter();
 
   const handleLikes = async () => {

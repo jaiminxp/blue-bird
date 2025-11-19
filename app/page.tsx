@@ -13,11 +13,12 @@ export default async function Home() {
     redirect("/login")
   }
 
-  const { data } = await supabase.from("tweets").select("*, profiles(*), likes(*)")
+  const { data } = await supabase.from("tweets").select("*, author: profiles(*), likes(user_id)")
 
   const tweets = data?.map((tweet) => ({
     ...tweet,
-    user_has_liked_tweet: tweet.likes.find(like => like.user_id === session?.user.id),
+    author: Array.isArray(tweet.author) ? tweet.author[0] : tweet.author,
+    user_has_liked_tweet: !!tweet.likes.find(like => like.user_id === session?.user.id),
     likes: tweet.likes.length,
   }))
 
@@ -26,7 +27,7 @@ export default async function Home() {
           <NewTweet/>
           <AuthButtonServer/>
           {tweets?.map((tweet) => (<div key={tweet.id}>
-              <p>{tweet.profiles.name} {tweet.profiles.username}</p>
+              <p>{tweet.author.name} {tweet.author.username}</p>
               <p>{tweet.title}</p>
               <Likes tweet={tweet} />
           </div>))}
