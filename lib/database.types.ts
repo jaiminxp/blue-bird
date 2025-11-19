@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      likes: {
+        Row: {
+          created_at: string
+          id: number
+          tweet_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          tweet_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          tweet_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_tweet_id_fkey"
+            columns: ["tweet_id"]
+            isOneToOne: false
+            referencedRelation: "tweets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string
