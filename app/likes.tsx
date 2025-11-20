@@ -2,8 +2,15 @@
 
 import { createClient } from "@/supabase/client";
 import { useRouter } from "next/navigation";
+import { startTransition } from "react";
 
-export default function Likes({ tweet, addOptimisticTweet }: { tweet: TweetWithAuthor, addOptimisticTweet: (tweet: TweetWithAuthor) => void }) {
+export default function Likes({
+  tweet,
+  addOptimisticTweet,
+}: {
+  tweet: TweetWithAuthor;
+  addOptimisticTweet: (tweet: TweetWithAuthor) => void;
+}) {
   const router = useRouter();
 
   const handleLikes = async () => {
@@ -13,30 +20,35 @@ export default function Likes({ tweet, addOptimisticTweet }: { tweet: TweetWithA
     } = await supabase.auth.getUser();
 
     if (user) {
-        if (tweet.user_has_liked_tweet) {
+      if (tweet.user_has_liked_tweet) {
+        startTransition(async () => {
           addOptimisticTweet({
             ...tweet,
             likes: tweet.likes - 1,
             user_has_liked_tweet: !tweet.user_has_liked_tweet,
-          })
-            
-        await supabase
-          .from("likes")
-          .delete()
-          .match({ user_id: user.id, tweet_id: tweet.id });
+          });
+
+          await supabase
+            .from("likes")
+            .delete()
+            .match({ user_id: user.id, tweet_id: tweet.id });
+        });
       } else {
-        addOptimisticTweet({
-          ...tweet,
-          likes: tweet.likes + 1,
-          user_has_liked_tweet: !tweet.user_has_liked_tweet,
-        })
-            
-        await supabase.from("likes").insert({
-          user_id: user.id,
-          tweet_id: tweet.id,
+        startTransition(async () => {
+          addOptimisticTweet({
+            ...tweet,
+            likes: tweet.likes + 1,
+            user_has_liked_tweet: !tweet.user_has_liked_tweet,
+          });
+
+          await supabase.from("likes").insert({
+            user_id: user.id,
+            tweet_id: tweet.id,
+          });
+
+          router.refresh();
         });
       }
-      router.refresh();
     }
   };
 

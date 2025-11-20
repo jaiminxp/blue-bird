@@ -16,7 +16,7 @@ export default function Tweets({ tweets }: { tweets: TweetWithAuthor[] }) {
     
   return (
     <div>
-      {tweets?.map((tweet) => (
+      {optimisticTweets?.map((tweet) => (
         <div key={tweet.id}>
           <p>
             {tweet.author.name} {tweet.author.username}
