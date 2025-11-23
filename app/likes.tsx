@@ -1,56 +1,33 @@
-"use client";
+'use client'
 
-import { createClient } from "@/supabase/client";
-import { useRouter } from "next/navigation";
-import { startTransition } from "react";
+import { createClient } from '@/supabase/client'
+import { useRouter } from 'next/navigation'
 
-export default function Likes({
-  tweet,
-  addOptimisticTweet,
-}: {
-  tweet: TweetWithAuthor;
-  addOptimisticTweet: (tweet: TweetWithAuthor) => void;
-}) {
-  const router = useRouter();
+export default function Likes({ tweet }: { tweet: TweetWithAuthor }) {
+  const router = useRouter()
 
   const handleLikes = async () => {
-    const supabase = await createClient<Database>();
+    const supabase = await createClient<Database>()
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser()
 
     if (user) {
       if (tweet.user_has_liked_tweet) {
-        startTransition(async () => {
-          addOptimisticTweet({
-            ...tweet,
-            likes: tweet.likes - 1,
-            user_has_liked_tweet: !tweet.user_has_liked_tweet,
-          });
-
-          await supabase
-            .from("likes")
-            .delete()
-            .match({ user_id: user.id, tweet_id: tweet.id });
-        });
+        await supabase
+          .from('likes')
+          .delete()
+          .match({ user_id: user.id, tweet_id: tweet.id })
       } else {
-        startTransition(async () => {
-          addOptimisticTweet({
-            ...tweet,
-            likes: tweet.likes + 1,
-            user_has_liked_tweet: !tweet.user_has_liked_tweet,
-          });
-
-          await supabase.from("likes").insert({
-            user_id: user.id,
-            tweet_id: tweet.id,
-          });
-
-          router.refresh();
-        });
+        await supabase.from('likes').insert({
+          user_id: user.id,
+          tweet_id: tweet.id,
+        })
       }
-    }
-  };
 
-  return <button onClick={handleLikes}>{tweet.likes} Likes</button>;
+      router.refresh()
+    }
+  }
+
+  return <button onClick={handleLikes}>{tweet.likes} Likes</button>
 }
